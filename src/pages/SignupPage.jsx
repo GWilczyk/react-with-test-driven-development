@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react'
+import { Component } from 'react'
 // import axios from 'axios'
 
 class SignupPage extends Component {
@@ -38,30 +38,70 @@ class SignupPage extends Component {
 		}
 
 		return (
-			<Fragment>
-				<form>
-					<h1>Sign Up</h1>
-					<label htmlFor='username'>Username</label>
-					<input id='username' onChange={this.onChange} />
+			<div className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'>
+				<form className='card mt-5'>
+					<div className='card-header'>
+						<h1 className='text-center my-3'>Sign Up</h1>
+					</div>
+					<div className='card-body'>
+						<div className='mb-3'>
+							<label className='form-label' htmlFor='username'>
+								Username
+							</label>
+							<input
+								className='form-control'
+								id='username'
+								onChange={this.onChange}
+							/>
+						</div>
 
-					<label htmlFor='email'>Email</label>
-					<input id='email' onChange={this.onChange} />
+						<div className='mb-3'>
+							<label className='form-label' htmlFor='email'>
+								Email
+							</label>
+							<input
+								className='form-control'
+								id='email'
+								onChange={this.onChange}
+							/>
+						</div>
 
-					<label htmlFor='password'>Password</label>
-					<input id='password' type='password' onChange={this.onChange} />
+						<div className='mb-3'>
+							<label className='form-label' htmlFor='password'>
+								Password
+							</label>
+							<input
+								className='form-control'
+								id='password'
+								type='password'
+								onChange={this.onChange}
+							/>
+						</div>
 
-					<label htmlFor='passwordConfirm'>Confirm Password</label>
-					<input
-						id='passwordConfirm'
-						type='password'
-						onChange={this.onChange}
-					/>
+						<div className='mb-4'>
+							<label className='form-label' htmlFor='passwordConfirm'>
+								Confirm Password
+							</label>
+							<input
+								className='form-control'
+								id='passwordConfirm'
+								type='password'
+								onChange={this.onChange}
+							/>
+						</div>
 
-					<button disabled={disabled} onClick={this.submit}>
-						Sign Up
-					</button>
+						<div className='text-center'>
+							<button
+								className='btn btn-primary'
+								disabled={disabled}
+								onClick={this.submit}
+								type='submit'>
+								Sign Up
+							</button>
+						</div>
+					</div>
 				</form>
-			</Fragment>
+			</div>
 		)
 	}
 }
