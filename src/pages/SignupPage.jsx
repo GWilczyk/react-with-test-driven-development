@@ -1,19 +1,24 @@
 import { Component, Fragment } from 'react'
+import axios from 'axios'
 
 class SignupPage extends Component {
 	state = {
+		username: '',
+		email: '',
 		password: '',
 		passwordConfirm: '',
 	}
 
-	onChangePassword = event => {
-		const currentValue = event.target.value
-		this.setState({ password: currentValue })
+	onChange = event => {
+		const { id, value } = event.target
+		this.setState({ [id]: value })
 	}
 
-	onChangePasswordConfirm = event => {
-		const currentValue = event.target.value
-		this.setState({ passwordConfirm: currentValue })
+	submit = event => {
+		event.preventDefault()
+		const { username, email, password } = this.state
+		const body = { username, email, password }
+		axios.post('/api/1.0/users', body)
 	}
 
 	render() {
@@ -26,24 +31,28 @@ class SignupPage extends Component {
 
 		return (
 			<Fragment>
-				<h1>Sign Up</h1>
-				<label htmlFor='username'>Username</label>
-				<input id='username' />
+				<form>
+					<h1>Sign Up</h1>
+					<label htmlFor='username'>Username</label>
+					<input id='username' onChange={this.onChange} />
 
-				<label htmlFor='email'>Email</label>
-				<input id='email' />
+					<label htmlFor='email'>Email</label>
+					<input id='email' onChange={this.onChange} />
 
-				<label htmlFor='password'>Password</label>
-				<input id='password' type='password' onChange={this.onChangePassword} />
+					<label htmlFor='password'>Password</label>
+					<input id='password' type='password' onChange={this.onChange} />
 
-				<label htmlFor='passwordConfirm'>Confirm Password</label>
-				<input
-					id='passwordConfirm'
-					type='password'
-					onChange={this.onChangePasswordConfirm}
-				/>
+					<label htmlFor='passwordConfirm'>Confirm Password</label>
+					<input
+						id='passwordConfirm'
+						type='password'
+						onChange={this.onChange}
+					/>
 
-				<button disabled={disabled}>Sign Up</button>
+					<button disabled={disabled} onClick={this.submit}>
+						Sign Up
+					</button>
+				</form>
 			</Fragment>
 		)
 	}
