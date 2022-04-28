@@ -1,5 +1,5 @@
 import { Component, Fragment } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 
 class SignupPage extends Component {
 	state = {
@@ -18,7 +18,15 @@ class SignupPage extends Component {
 		event.preventDefault()
 		const { username, email, password } = this.state
 		const body = { username, email, password }
-		axios.post('/api/1.0/users', body)
+
+		/* axios.post('/api/1.0/users', body) */
+		fetch('/api/1.0/users', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(body),
+		})
 	}
 
 	render() {
