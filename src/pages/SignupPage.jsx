@@ -1,12 +1,13 @@
-import { Component } from 'react'
-// import axios from 'axios'
+import React, { Component } from 'react'
+import axios from 'axios'
 
 class SignupPage extends Component {
 	state = {
-		username: '',
+		apiInProgress: false,
 		email: '',
 		password: '',
 		passwordConfirm: '',
+		username: '',
 	}
 
 	onChange = event => {
@@ -19,19 +20,20 @@ class SignupPage extends Component {
 		const { username, email, password } = this.state
 		const body = { username, email, password }
 
-		/* axios.post('/api/1.0/users', body) */
-		fetch('/api/1.0/users', {
+		this.setState({ apiInProgress: true })
+		axios.post('/api/1.0/users', body)
+		/* fetch('/api/1.0/users', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(body),
-		})
+		}) */
 	}
 
 	render() {
 		let disabled = true
-		const { password, passwordConfirm } = this.state
+		const { apiInProgress, password, passwordConfirm } = this.state
 
 		if (password && passwordConfirm) {
 			disabled = password !== passwordConfirm
@@ -43,6 +45,7 @@ class SignupPage extends Component {
 					<div className='card-header'>
 						<h1 className='text-center my-3'>Sign Up</h1>
 					</div>
+
 					<div className='card-body'>
 						<div className='mb-3'>
 							<label className='form-label' htmlFor='username'>
@@ -93,9 +96,14 @@ class SignupPage extends Component {
 						<div className='text-center'>
 							<button
 								className='btn btn-primary'
-								disabled={disabled}
+								disabled={disabled || apiInProgress}
 								onClick={this.submit}
 								type='submit'>
+								{apiInProgress && (
+									<span
+										className='spinner-border spinner-border-sm'
+										role='status'></span>
+								)}
 								Sign Up
 							</button>
 						</div>
