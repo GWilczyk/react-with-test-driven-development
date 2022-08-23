@@ -1,10 +1,16 @@
 import React from 'react'
-import SignupPage from './SignupPage'
-import { render, screen } from '@testing-library/react'
+import {
+	render,
+	screen,
+	waitFor,
+	// waitForElementToBeRemoved,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 // import axios from 'axios'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
+
+import SignupPage from './SignupPage'
 
 describe('Signup Page', () => {
 	describe('Layout', () => {
@@ -56,6 +62,16 @@ describe('Signup Page', () => {
 	})
 	describe('Interactions', () => {
 		let button
+		let counter = 0
+		let requestBody
+
+		const server = setupServer(
+			rest.post('/api/1.0/users', (req, res, ctx) => {
+				counter += 1
+				requestBody = req.body
+				return res(ctx.status(200))
+			})
+		)
 
 		const setup = () => {
 			render(<SignupPage />)
@@ -72,27 +88,23 @@ describe('Signup Page', () => {
 			userEvent.type(passwordConfirmInput, 'P4ssword')
 		}
 
+		beforeEach(() => (counter = 0))
+		beforeAll(() => server.listen())
+		afterAll(() => server.close())
+
 		it('enables the button when password and confirm password have same value', () => {
 			setup()
 
 			expect(button).toBeEnabled()
 		})
 		it('sends username, email and password to backend after clicking the button', async () => {
-			let requestBody
-			const server = setupServer(
-				rest.post('/api/1.0/users', (req, res, ctx) => {
-					requestBody = req.body
-					return res(ctx.status(200))
-				})
-			)
-			server.listen()
-
 			setup()
 
 			userEvent.click(button)
 
-			await new Promise(resolve => setTimeout(resolve, 500))
-
+			await screen.findByText(
+				'Please check your email to activate your account!'
+			)
 			expect(requestBody).toEqual({
 				username: 'user1',
 				email: 'user1@mail.com',
@@ -100,40 +112,44 @@ describe('Signup Page', () => {
 			})
 		})
 		it('disables button when there is an ongoing api call', async () => {
-			let counter = 0
-			const server = setupServer(
-				rest.post('/api/1.0/users', (req, res, ctx) => {
-					counter += 1
-					return res(ctx.status(200))
-				})
-			)
-			server.listen()
-
 			setup()
 
 			userEvent.click(button)
 			userEvent.click(button)
 
-			await new Promise(resolve => setTimeout(resolve, 500))
-
+			await screen.findByText(
+				'Please check your email to activate your account!'
+			)
 			expect(counter).toBe(1)
 		})
 		it('displays spinner after clicking the submit', async () => {
-			const server = setupServer(
-				rest.post('/api/1.0/users', (req, res, ctx) => {
-					return res(ctx.status(200))
-				})
-			)
-			server.listen()
-
 			setup()
 
 			expect(screen.queryByRole('status')).not.toBeInTheDocument()
-
 			userEvent.click(button)
-
 			const spinner = screen.getByRole('status')
 			expect(spinner).toBeInTheDocument()
+			await screen.findByText(
+				'Please check your email to activate your account!'
+			)
+		})
+		it('displays account activation notification after successful sign up request', async () => {
+			setup()
+
+			const message = 'Please check your email to activate your account!'
+			expect(screen.queryByText(message)).not.toBeInTheDocument()
+			userEvent.click(button)
+			expect(await screen.findByText(message)).toBeInTheDocument()
+		})
+		it('hides sign up form after successful sign up request', async () => {
+			setup()
+
+			const form = screen.getByTestId('form-signup')
+			userEvent.click(button)
+			await waitFor(() => {
+				expect(form).not.toBeInTheDocument()
+			})
+			// await waitForElementToBeRemoved(form)
 		})
 	})
 })
