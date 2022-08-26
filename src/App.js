@@ -1,7 +1,12 @@
+import React from 'react'
 import SignupPage from './pages/SignupPage'
 
 function App() {
-	return <SignupPage />
+	return (
+		<div className='container'>
+			<SignupPage />
+		</div>
+	)
 }
 
 export default App
