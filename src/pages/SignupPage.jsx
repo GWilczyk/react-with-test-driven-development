@@ -38,14 +38,12 @@ class SignupPage extends Component {
 			} else if (response.status === 400) {
 				const data = await response.json()
 
-				this.setState({ errors: data.validationErrors })
-				throw `il y a eu une p'tite erreur…`
+				this.setState({ apiInProgress: false, errors: data.validationErrors })
+
+				throw new Error(data.message)
 			}
 		} catch (error) {
-			console.log(
-				'🚀 ~ file: SignupPage.jsx ~ line 43 ~ SignupPage ~ error',
-				error
-			)
+			console.error(error)
 		}
 	}
 
@@ -121,8 +119,7 @@ class SignupPage extends Component {
 								<button
 									className='btn btn-primary'
 									disabled={disabled || apiInProgress}
-									onClick={this.submit}
-									type='submit'>
+									onClick={this.submit}>
 									{apiInProgress && (
 										<span
 											className='spinner-border spinner-border-sm'
