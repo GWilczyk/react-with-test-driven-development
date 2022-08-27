@@ -88,7 +88,10 @@ describe('Signup Page', () => {
 			userEvent.type(passwordConfirmInput, 'P4ssword')
 		}
 
-		beforeEach(() => (counter = 0))
+		beforeEach(() => {
+			counter = 0
+			server.resetHandlers()
+		})
 		beforeAll(() => server.listen())
 		afterAll(() => server.close())
 
