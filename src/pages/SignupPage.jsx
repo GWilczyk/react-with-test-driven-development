@@ -5,6 +5,7 @@ class SignupPage extends Component {
 	state = {
 		apiInProgress: false,
 		email: '',
+		errors: {},
 		password: '',
 		passwordConfirm: '',
 		signupSuccess: false,
@@ -24,7 +25,7 @@ class SignupPage extends Component {
 		this.setState({ apiInProgress: true })
 
 		try {
-			await fetch('/api/1.0/users', {
+			const response = await fetch('/api/1.0/users', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -32,18 +33,25 @@ class SignupPage extends Component {
 				body: JSON.stringify(body),
 			})
 
-			this.setState({ signupSuccess: true })
+			if (response.status === 200) {
+				this.setState({ signupSuccess: true })
+			} else if (response.status === 400) {
+				const data = await response.json()
 
-			// await axios.post('/api/1.0/users', body)
-			// this.setState({ signupSuccess: true })
+				this.setState({ errors: data.validationErrors })
+				throw `il y a eu une p'tite erreur…`
+			}
 		} catch (error) {
-			throw new Error(error.message)
+			console.log(
+				'🚀 ~ file: SignupPage.jsx ~ line 43 ~ SignupPage ~ error',
+				error
+			)
 		}
 	}
 
 	render() {
 		let disabled = true
-		const { apiInProgress, password, passwordConfirm, signupSuccess } =
+		const { apiInProgress, errors, password, passwordConfirm, signupSuccess } =
 			this.state
 
 		if (password && passwordConfirm) {
@@ -61,7 +69,6 @@ class SignupPage extends Component {
 						<div className='card-header'>
 							<h1 className='text-center my-3'>Sign Up</h1>
 						</div>
-
 						<div className='card-body'>
 							<div className='mb-3'>
 								<label className='form-label' htmlFor='username'>
@@ -72,6 +79,7 @@ class SignupPage extends Component {
 									id='username'
 									onChange={this.onChange}
 								/>
+								<span>{errors.username}</span>
 							</div>
 
 							<div className='mb-3'>
