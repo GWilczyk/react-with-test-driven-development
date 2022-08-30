@@ -69,7 +69,7 @@ describe('Signup Page', () => {
 		})
 	})
 	describe('Interactions', () => {
-		let button, passwordInput, passwordConfirmInput
+		let button, emailInput, passwordInput, passwordConfirmInput, usernameInput
 		let counter = 0
 		let requestBody
 
@@ -84,8 +84,8 @@ describe('Signup Page', () => {
 		const setup = () => {
 			render(<SignupPage />)
 
-			const usernameInput = screen.getByLabelText('Username')
-			const emailInput = screen.getByLabelText('E-mail')
+			usernameInput = screen.getByLabelText('Username')
+			emailInput = screen.getByLabelText('E-mail')
 			passwordInput = screen.getByLabelText('Password')
 			passwordConfirmInput = screen.getByLabelText('Confirm Password')
 			button = screen.queryByRole('button', { name: 'Sign Up' })
@@ -209,5 +209,22 @@ describe('Signup Page', () => {
 			const validationError = screen.queryByText('Password mismatch')
 			expect(validationError).toBeInTheDocument()
 		})
+
+		it.each`
+			field         | message                      | label
+			${'username'} | ${'Username cannot be null'} | ${'Username'}
+			${'email'}    | ${'E-mail cannot be null'}   | ${'E-mail'}
+			${'password'} | ${'Password cannot be null'} | ${'Password'}
+		`(
+			'clears validation error after $field field is updated',
+			async ({ field, message, label }) => {
+				server.use(generateValidationError(field, message))
+				setup()
+				userEvent.click(button)
+				const validationError = await screen.findByText(message)
+				userEvent.type(screen.getByLabelText(label), 'field-updated')
+				expect(validationError).not.toBeInTheDocument()
+			}
+		)
 	})
 })

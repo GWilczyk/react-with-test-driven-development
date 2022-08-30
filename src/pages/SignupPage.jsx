@@ -15,7 +15,14 @@ class SignupPage extends Component {
 
 	onChange = event => {
 		const { id, value } = event.target
-		this.setState({ [id]: value })
+
+		const errorsCopy = { ...this.state.errors }
+		delete errorsCopy[id]
+
+		this.setState({
+			[id]: value,
+			errors: errorsCopy,
+		})
 	}
 
 	submit = async event => {
