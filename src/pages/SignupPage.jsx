@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
+import Input from '../components/Input'
 // import axios from 'axios'
 
 class SignupPage extends Component {
 	state = {
 		apiInProgress: false,
 		email: '',
+		errors: {},
 		password: '',
 		passwordConfirm: '',
 		signupSuccess: false,
@@ -13,7 +15,14 @@ class SignupPage extends Component {
 
 	onChange = event => {
 		const { id, value } = event.target
-		this.setState({ [id]: value })
+
+		const errorsCopy = { ...this.state.errors }
+		delete errorsCopy[id]
+
+		this.setState({
+			[id]: value,
+			errors: errorsCopy,
+		})
 	}
 
 	submit = async event => {
@@ -24,7 +33,7 @@ class SignupPage extends Component {
 		this.setState({ apiInProgress: true })
 
 		try {
-			await fetch('/api/1.0/users', {
+			const response = await fetch('/api/1.0/users', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -32,23 +41,31 @@ class SignupPage extends Component {
 				body: JSON.stringify(body),
 			})
 
-			this.setState({ signupSuccess: true })
+			if (response.status === 200) {
+				this.setState({ signupSuccess: true })
+			} else if (response.status === 400) {
+				const data = await response.json()
 
-			// await axios.post('/api/1.0/users', body)
-			// this.setState({ signupSuccess: true })
+				this.setState({ apiInProgress: false, errors: data.validationErrors })
+
+				throw new Error(data.message)
+			}
 		} catch (error) {
-			throw new Error(error.message)
+			// console.error(error)
 		}
 	}
 
 	render() {
-		let disabled = true
-		const { apiInProgress, password, passwordConfirm, signupSuccess } =
+		const { apiInProgress, errors, password, passwordConfirm, signupSuccess } =
 			this.state
 
+		let disabled = true
 		if (password && passwordConfirm) {
 			disabled = password !== passwordConfirm
 		}
+
+		const passwordMismatch =
+			password !== passwordConfirm ? 'Password mismatch' : ''
 
 		return (
 			<div className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'>
@@ -61,60 +78,42 @@ class SignupPage extends Component {
 						<div className='card-header'>
 							<h1 className='text-center my-3'>Sign Up</h1>
 						</div>
-
 						<div className='card-body'>
-							<div className='mb-3'>
-								<label className='form-label' htmlFor='username'>
-									Username
-								</label>
-								<input
-									className='form-control'
-									id='username'
-									onChange={this.onChange}
-								/>
-							</div>
+							<Input
+								help={errors.username}
+								id='username'
+								label='Username'
+								onChange={this.onChange}
+							/>
 
-							<div className='mb-3'>
-								<label className='form-label' htmlFor='email'>
-									Email
-								</label>
-								<input
-									className='form-control'
-									id='email'
-									onChange={this.onChange}
-								/>
-							</div>
+							<Input
+								help={errors.email}
+								id='email'
+								label='E-mail'
+								onChange={this.onChange}
+							/>
 
-							<div className='mb-3'>
-								<label className='form-label' htmlFor='password'>
-									Password
-								</label>
-								<input
-									className='form-control'
-									id='password'
-									type='password'
-									onChange={this.onChange}
-								/>
-							</div>
+							<Input
+								help={errors.password}
+								id='password'
+								label='Password'
+								onChange={this.onChange}
+								type='password'
+							/>
 
-							<div className='mb-4'>
-								<label className='form-label' htmlFor='passwordConfirm'>
-									Confirm Password
-								</label>
-								<input
-									className='form-control'
-									id='passwordConfirm'
-									type='password'
-									onChange={this.onChange}
-								/>
-							</div>
+							<Input
+								help={passwordMismatch}
+								id='passwordConfirm'
+								label='Confirm Password'
+								onChange={this.onChange}
+								type='password'
+							/>
 
 							<div className='text-center'>
 								<button
 									className='btn btn-primary'
 									disabled={disabled || apiInProgress}
-									onClick={this.submit}
-									type='submit'>
+									onClick={this.submit}>
 									{apiInProgress && (
 										<span
 											className='spinner-border spinner-border-sm'
