@@ -1,6 +1,9 @@
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react'
-import Input from '../components/Input'
+import { withTranslation } from 'react-i18next'
 // import axios from 'axios'
+
+import Input from '../components/Input'
 
 class SignupPage extends Component {
 	state = {
@@ -56,6 +59,7 @@ class SignupPage extends Component {
 	}
 
 	render() {
+		const { t } = this.props
 		const { apiInProgress, errors, password, passwordConfirm, signupSuccess } =
 			this.state
 
@@ -76,27 +80,27 @@ class SignupPage extends Component {
 				) : (
 					<form className='card mt-5' data-testid='form-signup'>
 						<div className='card-header'>
-							<h1 className='text-center my-3'>Sign Up</h1>
+							<h1 className='text-center my-3'>{t('signUp')}</h1>
 						</div>
 						<div className='card-body'>
 							<Input
 								help={errors.username}
 								id='username'
-								label='Username'
+								label={t('username')}
 								onChange={this.onChange}
 							/>
 
 							<Input
 								help={errors.email}
 								id='email'
-								label='E-mail'
+								label={t('email')}
 								onChange={this.onChange}
 							/>
 
 							<Input
 								help={errors.password}
 								id='password'
-								label='Password'
+								label={t('password')}
 								onChange={this.onChange}
 								type='password'
 							/>
@@ -104,7 +108,7 @@ class SignupPage extends Component {
 							<Input
 								help={passwordMismatch}
 								id='passwordConfirm'
-								label='Confirm Password'
+								label={t('passwordConfirm')}
 								onChange={this.onChange}
 								type='password'
 							/>
@@ -119,7 +123,7 @@ class SignupPage extends Component {
 											className='spinner-border spinner-border-sm'
 											role='status'></span>
 									)}
-									Sign Up
+									{t('signUp')}
 								</button>
 							</div>
 						</div>
@@ -130,4 +134,4 @@ class SignupPage extends Component {
 	}
 }
 
-export default SignupPage
+export default withTranslation()(SignupPage)

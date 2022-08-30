@@ -10,6 +10,7 @@ import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 
+import '../locales/i18n'
 import SignupPage from './SignupPage'
 
 describe('Signup Page', () => {
