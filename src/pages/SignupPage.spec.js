@@ -69,7 +69,7 @@ describe('Signup Page', () => {
 		})
 	})
 	describe('Interactions', () => {
-		let button
+		let button, passwordInput, passwordConfirmInput
 		let counter = 0
 		let requestBody
 
@@ -86,8 +86,8 @@ describe('Signup Page', () => {
 
 			const usernameInput = screen.getByLabelText('Username')
 			const emailInput = screen.getByLabelText('E-mail')
-			const passwordInput = screen.getByLabelText('Password')
-			const passwordConfirmInput = screen.getByLabelText('Confirm Password')
+			passwordInput = screen.getByLabelText('Password')
+			passwordConfirmInput = screen.getByLabelText('Confirm Password')
 			button = screen.queryByRole('button', { name: 'Sign Up' })
 
 			userEvent.type(usernameInput, 'user1')
@@ -200,6 +200,14 @@ describe('Signup Page', () => {
 
 			expect(screen.queryByRole('status')).not.toBeInTheDocument()
 			expect(button).toBeEnabled()
+		})
+
+		it('displays mismatch message for password confirm input', () => {
+			setup()
+			userEvent.type(passwordInput, 'P4ssword')
+			userEvent.type(passwordConfirmInput, 'anotherOne')
+			const validationError = screen.queryByText('Password mismatch')
+			expect(validationError).toBeInTheDocument()
 		})
 	})
 })

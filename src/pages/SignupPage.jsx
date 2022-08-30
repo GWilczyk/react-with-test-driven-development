@@ -49,13 +49,16 @@ class SignupPage extends Component {
 	}
 
 	render() {
-		let disabled = true
 		const { apiInProgress, errors, password, passwordConfirm, signupSuccess } =
 			this.state
 
+		let disabled = true
 		if (password && passwordConfirm) {
 			disabled = password !== passwordConfirm
 		}
+
+		const passwordMismatch =
+			password !== passwordConfirm ? 'Password mismatch' : ''
 
 		return (
 			<div className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'>
@@ -91,17 +94,13 @@ class SignupPage extends Component {
 								type='password'
 							/>
 
-							<div className='mb-4'>
-								<label className='form-label' htmlFor='passwordConfirm'>
-									Confirm Password
-								</label>
-								<input
-									className='form-control'
-									id='passwordConfirm'
-									type='password'
-									onChange={this.onChange}
-								/>
-							</div>
+							<Input
+								help={passwordMismatch}
+								id='passwordConfirm'
+								label='Confirm Password'
+								onChange={this.onChange}
+								type='password'
+							/>
 
 							<div className='text-center'>
 								<button

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
 
-const Input = ({ help, id, label, onChange, type = 'text' }) => {
+const Input = ({ help, id, label, onChange, type }) => {
 	let inputClass = 'form-control'
 	if (help) {
 		inputClass += ' is-invalid'
@@ -12,7 +12,12 @@ const Input = ({ help, id, label, onChange, type = 'text' }) => {
 			<label className='form-label' htmlFor={id}>
 				{label}
 			</label>
-			<input className={inputClass} id={id} onChange={onChange} type={type} />
+			<input
+				className={inputClass}
+				id={id}
+				onChange={onChange}
+				type={type || 'text'}
+			/>
 			<span className='invalid-feedback'>{help}</span>
 		</div>
 	)
