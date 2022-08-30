@@ -19,41 +19,49 @@ describe('Signup Page', () => {
 			const header = screen.queryByRole('heading', { name: 'Sign Up' })
 			expect(header).toBeInTheDocument()
 		})
+
 		it('has username input', () => {
 			render(<SignupPage />)
 			const input = screen.getByLabelText('Username')
 			expect(input).toBeInTheDocument()
 		})
+
 		it('has email input', () => {
 			render(<SignupPage />)
-			const input = screen.getByLabelText('Email')
+			const input = screen.getByLabelText('E-mail')
 			expect(input).toBeInTheDocument()
 		})
+
 		it('has password input', () => {
 			render(<SignupPage />)
 			const input = screen.getByLabelText('Password')
 			expect(input).toBeInTheDocument()
 		})
+
 		it('has password type for password input', () => {
 			render(<SignupPage />)
 			const input = screen.getByLabelText('Password')
 			expect(input.type).toBe('password')
 		})
+
 		it('has password confirm input', () => {
 			render(<SignupPage />)
 			const input = screen.getByLabelText('Confirm Password')
 			expect(input).toBeInTheDocument()
 		})
+
 		it('has password type for password confirm input', () => {
 			render(<SignupPage />)
 			const input = screen.getByLabelText('Confirm Password')
 			expect(input.type).toBe('password')
 		})
+
 		it('has Signup button', () => {
 			render(<SignupPage />)
 			const button = screen.queryByRole('button', { name: 'Sign Up' })
 			expect(button).toBeInTheDocument()
 		})
+
 		it('disables the button initially', () => {
 			render(<SignupPage />)
 			const button = screen.queryByRole('button', { name: 'Sign Up' })
@@ -77,7 +85,7 @@ describe('Signup Page', () => {
 			render(<SignupPage />)
 
 			const usernameInput = screen.getByLabelText('Username')
-			const emailInput = screen.getByLabelText('Email')
+			const emailInput = screen.getByLabelText('E-mail')
 			const passwordInput = screen.getByLabelText('Password')
 			const passwordConfirmInput = screen.getByLabelText('Confirm Password')
 			button = screen.queryByRole('button', { name: 'Sign Up' })
@@ -100,6 +108,7 @@ describe('Signup Page', () => {
 
 			expect(button).toBeEnabled()
 		})
+
 		it('sends username, email and password to backend after clicking the button', async () => {
 			setup()
 
@@ -114,6 +123,7 @@ describe('Signup Page', () => {
 				password: 'P4ssword',
 			})
 		})
+
 		it('disables button when there is an ongoing api call', async () => {
 			setup()
 
@@ -125,6 +135,7 @@ describe('Signup Page', () => {
 			)
 			expect(counter).toBe(1)
 		})
+
 		it('displays spinner after clicking the submit', async () => {
 			setup()
 
@@ -136,6 +147,7 @@ describe('Signup Page', () => {
 				'Please check your email to activate your account!'
 			)
 		})
+
 		it('displays account activation notification after successful sign up request', async () => {
 			setup()
 
@@ -144,6 +156,7 @@ describe('Signup Page', () => {
 			userEvent.click(button)
 			expect(await screen.findByText(message)).toBeInTheDocument()
 		})
+
 		it('hides sign up form after successful sign up request', async () => {
 			setup()
 
@@ -154,33 +167,33 @@ describe('Signup Page', () => {
 			})
 			// await waitForElementToBeRemoved(form)
 		})
-		it('displays validation message for username', async () => {
-			server.use(
-				rest.post('/api/1.0/users', (req, res, ctx) => {
-					return res(
-						ctx.status(400),
-						ctx.json({
-							validationErrors: { username: 'Username cannot be null' },
-						})
-					)
-				})
-			)
+
+		const generateValidationError = (field, message) => {
+			return rest.post('/api/1.0/users', (req, res, ctx) => {
+				return res(
+					ctx.status(400),
+					ctx.json({
+						validationErrors: { [field]: message },
+					})
+				)
+			})
+		}
+
+		it.each`
+			field         | message
+			${'username'} | ${'Username cannot be null'}
+			${'email'}    | ${'E-mail cannot be null'}
+			${'password'} | ${'Password cannot be null'}
+		`('displays $message for $field', async ({ field, message }) => {
+			server.use(generateValidationError(field, message))
 			setup()
 			userEvent.click(button)
-			const validationError = await screen.findByText('Username cannot be null')
+			const validationError = await screen.findByText(message)
 			expect(validationError).toBeInTheDocument()
 		})
+
 		it('hides spinner and enables button after response received', async () => {
-			server.use(
-				rest.post('/api/1.0/users', (req, res, ctx) => {
-					return res(
-						ctx.status(400),
-						ctx.json({
-							validationErrors: { username: 'Username cannot be null' },
-						})
-					)
-				})
-			)
+			server.use(generateValidationError('username', 'Username cannot be null'))
 			setup()
 			userEvent.click(button)
 			await screen.findByText('Username cannot be null')

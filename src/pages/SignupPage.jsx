@@ -44,7 +44,7 @@ class SignupPage extends Component {
 				throw new Error(data.message)
 			}
 		} catch (error) {
-			console.error(error)
+			// console.error(error)
 		}
 	}
 
@@ -76,28 +76,20 @@ class SignupPage extends Component {
 								onChange={this.onChange}
 							/>
 
-							<div className='mb-3'>
-								<label className='form-label' htmlFor='email'>
-									Email
-								</label>
-								<input
-									className='form-control'
-									id='email'
-									onChange={this.onChange}
-								/>
-							</div>
+							<Input
+								help={errors.email}
+								id='email'
+								label='E-mail'
+								onChange={this.onChange}
+							/>
 
-							<div className='mb-3'>
-								<label className='form-label' htmlFor='password'>
-									Password
-								</label>
-								<input
-									className='form-control'
-									id='password'
-									type='password'
-									onChange={this.onChange}
-								/>
-							</div>
+							<Input
+								help={errors.password}
+								id='password'
+								label='Password'
+								onChange={this.onChange}
+								type='password'
+							/>
 
 							<div className='mb-4'>
 								<label className='form-label' htmlFor='passwordConfirm'>
