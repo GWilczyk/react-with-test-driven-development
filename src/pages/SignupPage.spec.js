@@ -235,6 +235,8 @@ describe('Signup Page', () => {
 	})
 
 	describe('Internationalization', () => {
+		let englishToggle, frenchToggle
+
 		const setup = () => {
 			render(
 				<>
@@ -242,6 +244,9 @@ describe('Signup Page', () => {
 					<LanguageSelector />
 				</>
 			)
+
+			frenchToggle = screen.getByTitle('Français')
+			englishToggle = screen.getByTitle('English')
 		}
 
 		afterEach(() => {
@@ -267,8 +272,6 @@ describe('Signup Page', () => {
 
 		it('displays all text in French after changing the language', () => {
 			setup()
-
-			const frenchToggle = screen.getByTitle('Français')
 			userEvent.click(frenchToggle)
 
 			expect(
@@ -285,10 +288,7 @@ describe('Signup Page', () => {
 
 		it('displays all text in English after changing back from French', () => {
 			setup()
-
-			const frenchToggle = screen.getByTitle('Français')
 			userEvent.click(frenchToggle)
-			const englishToggle = screen.getByTitle('English')
 			userEvent.click(englishToggle)
 
 			expect(
@@ -301,6 +301,17 @@ describe('Signup Page', () => {
 			expect(screen.getByLabelText(en.email)).toBeInTheDocument()
 			expect(screen.getByLabelText(en.password)).toBeInTheDocument()
 			expect(screen.getByLabelText(en.passwordConfirm)).toBeInTheDocument()
+		})
+
+		it('displays password mismatch validation in French', () => {
+			setup()
+			userEvent.click(frenchToggle)
+			const passwordInput = screen.getByLabelText(fr.password)
+			userEvent.type(passwordInput, 'P4ss')
+			const validationMessageInFrench = screen.queryByText(
+				fr.passwordMismatchValidation
+			)
+			expect(validationMessageInFrench).toBeInTheDocument()
 		})
 	})
 })

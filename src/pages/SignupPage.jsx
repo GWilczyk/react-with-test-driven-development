@@ -69,7 +69,7 @@ class SignupPage extends Component {
 		}
 
 		const passwordMismatch =
-			password !== passwordConfirm ? 'Password mismatch' : ''
+			password !== passwordConfirm ? t('passwordMismatchValidation') : ''
 
 		return (
 			<div className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'>
