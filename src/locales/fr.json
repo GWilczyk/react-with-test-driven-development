@@ -1,0 +1,8 @@
+{
+	"signUp": "Inscription",
+	"username": "Nom d'utilisateur·trice",
+	"email": "Adresse email",
+	"password": "Mot de passe",
+	"passwordConfirm": "Confirmation du mot de passe",
+	"passwordMismatchValidation": "Les mots de passe sont différents"
+}
