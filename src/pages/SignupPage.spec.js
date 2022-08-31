@@ -10,8 +10,10 @@ import userEvent from '@testing-library/user-event'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 
-import '../locales/i18n'
 import SignupPage from './SignupPage'
+import '../locales/i18n'
+import en from '../locales/en.json'
+import fr from '../locales/fr.json'
 
 describe('Signup Page', () => {
 	describe('Layout', () => {
@@ -69,6 +71,7 @@ describe('Signup Page', () => {
 			expect(button).toBeDisabled()
 		})
 	})
+
 	describe('Interactions', () => {
 		let button, emailInput, passwordInput, passwordConfirmInput, usernameInput
 		let counter = 0
@@ -227,5 +230,59 @@ describe('Signup Page', () => {
 				expect(validationError).not.toBeInTheDocument()
 			}
 		)
+	})
+
+	describe('Internationalization', () => {
+		it('initially displays all text in English', () => {
+			render(<SignupPage />)
+			expect(
+				screen.getByRole('heading', { name: en.signUp })
+			).toBeInTheDocument()
+			expect(
+				screen.getByRole('button', { name: en.signUp })
+			).toBeInTheDocument()
+			expect(screen.getByLabelText(en.username)).toBeInTheDocument()
+			expect(screen.getByLabelText(en.email)).toBeInTheDocument()
+			expect(screen.getByLabelText(en.password)).toBeInTheDocument()
+			expect(screen.getByLabelText(en.passwordConfirm)).toBeInTheDocument()
+		})
+
+		it('displays all text in French after changing the language', () => {
+			render(<SignupPage />)
+
+			const frenchToggle = screen.getByTitle('Français')
+			userEvent.click(frenchToggle)
+
+			expect(
+				screen.getByRole('heading', { name: fr.signUp })
+			).toBeInTheDocument()
+			expect(
+				screen.getByRole('button', { name: fr.signUp })
+			).toBeInTheDocument()
+			expect(screen.getByLabelText(fr.username)).toBeInTheDocument()
+			expect(screen.getByLabelText(fr.email)).toBeInTheDocument()
+			expect(screen.getByLabelText(fr.password)).toBeInTheDocument()
+			expect(screen.getByLabelText(fr.passwordConfirm)).toBeInTheDocument()
+		})
+
+		it('displays all text in English after changing back from French', () => {
+			render(<SignupPage />)
+
+			const frenchToggle = screen.getByTitle('Français')
+			userEvent.click(frenchToggle)
+			const englishToggle = screen.getByTitle('English')
+			userEvent.click(englishToggle)
+
+			expect(
+				screen.getByRole('heading', { name: en.signUp })
+			).toBeInTheDocument()
+			expect(
+				screen.getByRole('button', { name: en.signUp })
+			).toBeInTheDocument()
+			expect(screen.getByLabelText(en.username)).toBeInTheDocument()
+			expect(screen.getByLabelText(en.email)).toBeInTheDocument()
+			expect(screen.getByLabelText(en.password)).toBeInTheDocument()
+			expect(screen.getByLabelText(en.passwordConfirm)).toBeInTheDocument()
+		})
 	})
 })
