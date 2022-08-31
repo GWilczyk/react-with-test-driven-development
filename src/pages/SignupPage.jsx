@@ -129,24 +129,6 @@ class SignupPage extends Component {
 						</div>
 					</form>
 				)}
-
-				<img
-					alt='French Flag'
-					src='https://countryflagsapi.com/png/fr'
-					onClick={() => this.props.i18n.changeLanguage('fr')}
-					title='Français'
-					width={36}
-					height={24}
-				/>
-
-				<img
-					alt='Great Britain Flag'
-					src='https://countryflagsapi.com/png/gb'
-					onClick={() => this.props.i18n.changeLanguage('en')}
-					title='English'
-					width={36}
-					height={24}
-				/>
 			</div>
 		)
 	}

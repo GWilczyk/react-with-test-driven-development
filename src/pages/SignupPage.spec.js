@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+	act,
 	render,
 	screen,
 	waitFor,
@@ -11,7 +12,8 @@ import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 
 import SignupPage from './SignupPage'
-import '../locales/i18n'
+import LanguageSelector from '../components/LanguageSelector'
+import i18n from '../locales/i18n'
 import en from '../locales/en.json'
 import fr from '../locales/fr.json'
 
@@ -233,8 +235,24 @@ describe('Signup Page', () => {
 	})
 
 	describe('Internationalization', () => {
+		const setup = () => {
+			render(
+				<>
+					<SignupPage />
+					<LanguageSelector />
+				</>
+			)
+		}
+
+		afterEach(() => {
+			act(() => {
+				i18n.changeLanguage('en')
+			})
+		})
+
 		it('initially displays all text in English', () => {
-			render(<SignupPage />)
+			setup()
+
 			expect(
 				screen.getByRole('heading', { name: en.signUp })
 			).toBeInTheDocument()
@@ -248,7 +266,7 @@ describe('Signup Page', () => {
 		})
 
 		it('displays all text in French after changing the language', () => {
-			render(<SignupPage />)
+			setup()
 
 			const frenchToggle = screen.getByTitle('Français')
 			userEvent.click(frenchToggle)
@@ -266,7 +284,7 @@ describe('Signup Page', () => {
 		})
 
 		it('displays all text in English after changing back from French', () => {
-			render(<SignupPage />)
+			setup()
 
 			const frenchToggle = screen.getByTitle('Français')
 			userEvent.click(frenchToggle)
