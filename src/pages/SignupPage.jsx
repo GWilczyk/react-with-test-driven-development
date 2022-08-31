@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react'
 import { withTranslation } from 'react-i18next'
-// import axios from 'axios'
-
+import { signup } from '../api/apiCalls'
 import Input from '../components/Input'
 
 class SignupPage extends Component {
@@ -36,14 +35,7 @@ class SignupPage extends Component {
 		this.setState({ apiInProgress: true })
 
 		try {
-			const response = await fetch('/api/1.0/users', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept-Language': this.props.i18n.language,
-				},
-				body: JSON.stringify(body),
-			})
+			const response = await signup(body)
 
 			if (response.status === 200) {
 				this.setState({ signupSuccess: true })
