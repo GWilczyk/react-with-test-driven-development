@@ -40,6 +40,7 @@ class SignupPage extends Component {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					'Accept-Language': this.props.i18n.language,
 				},
 				body: JSON.stringify(body),
 			})

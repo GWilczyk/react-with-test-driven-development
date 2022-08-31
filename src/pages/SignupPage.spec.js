@@ -4,7 +4,7 @@ import {
 	render,
 	screen,
 	waitFor,
-	// waitForElementToBeRemoved,
+	waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 // import axios from 'axios'
@@ -16,6 +16,26 @@ import LanguageSelector from '../components/LanguageSelector'
 import i18n from '../locales/i18n'
 import en from '../locales/en.json'
 import fr from '../locales/fr.json'
+
+let acceptLanguageHeader
+let counter = 0
+let requestBody
+
+const server = setupServer(
+	rest.post('/api/1.0/users', (req, res, ctx) => {
+		acceptLanguageHeader = req.headers.get('Accept-Language')
+		counter += 1
+		requestBody = req.body
+		return res(ctx.status(200))
+	})
+)
+
+beforeEach(() => {
+	counter = 0
+	server.resetHandlers()
+})
+beforeAll(() => server.listen())
+afterAll(() => server.close())
 
 describe('Signup Page', () => {
 	describe('Layout', () => {
@@ -76,16 +96,6 @@ describe('Signup Page', () => {
 
 	describe('Interactions', () => {
 		let button, emailInput, passwordInput, passwordConfirmInput, usernameInput
-		let counter = 0
-		let requestBody
-
-		const server = setupServer(
-			rest.post('/api/1.0/users', (req, res, ctx) => {
-				counter += 1
-				requestBody = req.body
-				return res(ctx.status(200))
-			})
-		)
 
 		const setup = () => {
 			render(<SignupPage />)
@@ -101,13 +111,6 @@ describe('Signup Page', () => {
 			userEvent.type(passwordInput, 'P4ssword')
 			userEvent.type(passwordConfirmInput, 'P4ssword')
 		}
-
-		beforeEach(() => {
-			counter = 0
-			server.resetHandlers()
-		})
-		beforeAll(() => server.listen())
-		afterAll(() => server.close())
 
 		it('enables the button when password and confirm password have same value', () => {
 			setup()
@@ -235,7 +238,7 @@ describe('Signup Page', () => {
 	})
 
 	describe('Internationalization', () => {
-		let englishToggle, frenchToggle
+		let englishToggle, frenchToggle, passwordInput, passwordConfirmInput
 
 		const setup = () => {
 			render(
@@ -247,6 +250,8 @@ describe('Signup Page', () => {
 
 			frenchToggle = screen.getByTitle('Français')
 			englishToggle = screen.getByTitle('English')
+			passwordInput = screen.getByLabelText(en.password)
+			passwordConfirmInput = screen.getByLabelText(en.passwordConfirm)
 		}
 
 		afterEach(() => {
@@ -306,12 +311,40 @@ describe('Signup Page', () => {
 		it('displays password mismatch validation in French', () => {
 			setup()
 			userEvent.click(frenchToggle)
-			const passwordInput = screen.getByLabelText(fr.password)
 			userEvent.type(passwordInput, 'P4ss')
 			const validationMessageInFrench = screen.queryByText(
 				fr.passwordMismatchValidation
 			)
 			expect(validationMessageInFrench).toBeInTheDocument()
+		})
+
+		it('sends accept language header as "en" for outgoing request', async () => {
+			setup()
+			userEvent.type(passwordInput, 'P4ssword')
+			userEvent.type(passwordConfirmInput, 'P4ssword')
+
+			const button = screen.getByRole('button', { name: en.signUp })
+			const form = screen.queryByTestId('form-signup')
+
+			userEvent.click(button)
+			await waitForElementToBeRemoved(form)
+
+			expect(acceptLanguageHeader).toBe('en')
+		})
+
+		it('sends accept language header as "fr" for outgoing request after selecting that language', async () => {
+			setup()
+			userEvent.type(passwordInput, 'P4ssword')
+			userEvent.type(passwordConfirmInput, 'P4ssword')
+
+			const button = screen.getByRole('button', { name: en.signUp })
+			const form = screen.queryByTestId('form-signup')
+
+			userEvent.click(frenchToggle)
+			userEvent.click(button)
+			await waitForElementToBeRemoved(form)
+
+			expect(acceptLanguageHeader).toBe('fr')
 		})
 	})
 })
