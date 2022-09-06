@@ -1,5 +1,6 @@
 {
 	"signUp": "Inscription",
+	"login": "Connexion",
 	"username": "Nom d'utilisateur·trice",
 	"email": "Adresse email",
 	"password": "Mot de passe",

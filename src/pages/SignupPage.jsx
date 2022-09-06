@@ -65,7 +65,9 @@ class SignupPage extends Component {
 			password !== passwordConfirm ? t('passwordMismatchValidation') : ''
 
 		return (
-			<div className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'>
+			<div
+				className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'
+				data-testid='signup-page'>
 				{signupSuccess ? (
 					<div className='alert alert-success mt-3'>
 						Please check your email to activate your account!
