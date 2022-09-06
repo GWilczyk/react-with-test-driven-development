@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import AccountActivationPage from './pages/AccountActivationPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
@@ -39,6 +40,7 @@ function App() {
 
 			<div className='container'>
 				<Route exact path='/' component={HomePage} />
+				<Route path='/activate/:token' component={AccountActivationPage} />
 				<Route path='/login' component={LoginPage} />
 				<Route path='/signup' component={SignupPage} />
 				<Route path='/user/:id' component={UserPage} />
