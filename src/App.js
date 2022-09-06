@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 import HomePage from './pages/HomePage'
@@ -11,51 +12,39 @@ import logo from './assets/hoaxify.png'
 
 function App() {
 	const { t } = useTranslation()
-	const [path, setPath] = useState(window.location.pathname)
-
-	const onClickLink = event => {
-		event.preventDefault()
-		const _path = event.currentTarget.attributes.href.value
-		window.history.pushState({}, '', _path)
-		setPath(_path)
-	}
 
 	return (
-		<>
+		<Router>
 			<nav className='navbar navbar-expand navbar-light bg-light shadow-sm'>
 				<div className='container'>
-					<a
-						className='navbar-brand'
-						href='/'
-						title='Home'
-						onClick={onClickLink}>
+					<Link className='navbar-brand' to='/' title='Home'>
 						<img src={logo} alt='Hoaxify' width='60' />
 						Hoaxify
-					</a>
+					</Link>
 
 					<ul className='navbar-nav'>
 						<li className='nav-item'>
-							<a className='nav-link' href='/signup' onClick={onClickLink}>
+							<Link className='nav-link' to='/signup'>
 								{t('signUp')}
-							</a>
+							</Link>
 						</li>
 						<li className='nav-item'>
-							<a className='nav-link' href='/login' onClick={onClickLink}>
+							<Link className='nav-link' to='/login'>
 								{t('login')}
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</div>
 			</nav>
 
 			<div className='container'>
-				{path === '/' && <HomePage />}
-				{path === '/login' && <LoginPage />}
-				{path === '/signup' && <SignupPage />}
-				{path.startsWith('/user/') && <UserPage />}
+				<Route exact path='/' component={HomePage} />
+				<Route path='/login' component={LoginPage} />
+				<Route path='/signup' component={SignupPage} />
+				<Route path='/user/:id' component={UserPage} />
 				<LanguageSelector />
 			</div>
-		</>
+		</Router>
 	)
 }
 
