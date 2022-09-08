@@ -2,7 +2,10 @@
 import React, { Component } from 'react'
 import { withTranslation } from 'react-i18next'
 import { signup } from '../api/apiCalls'
+
+import Alert from '../components/Alert'
 import Input from '../components/Input'
+import Spinner from '../components/Spinner'
 
 class SignupPage extends Component {
 	state = {
@@ -37,17 +40,15 @@ class SignupPage extends Component {
 		try {
 			const response = await signup(body)
 
-			if (response.status === 200) {
-				this.setState({ signupSuccess: true })
-			} else if (response.status === 400) {
+			if (response.ok) {
+				this.setState({ apiInProgress: false, signupSuccess: true })
+			} else {
 				const data = await response.json()
-
-				this.setState({ apiInProgress: false, errors: data.validationErrors })
-
-				throw new Error(data.message)
+				this.setState({ errors: data.validationErrors })
+				throw new Error('Submit failed')
 			}
 		} catch (error) {
-			// console.error(error)
+			this.setState({ apiInProgress: false })
 		}
 	}
 
@@ -65,13 +66,13 @@ class SignupPage extends Component {
 			password !== passwordConfirm ? t('passwordMismatchValidation') : ''
 
 		return (
-			<div className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'>
+			<div
+				className='col-md-8 offset-md-2 col-lg-6 offset-lg-3'
+				data-testid='signup-page'>
 				{signupSuccess ? (
-					<div className='alert alert-success mt-3'>
-						Please check your email to activate your account!
-					</div>
+					<Alert>Please check your email to activate your account!</Alert>
 				) : (
-					<form className='card mt-5' data-testid='form-signup'>
+					<form className='card' data-testid='form-signup'>
 						<div className='card-header'>
 							<h1 className='text-center my-3'>{t('signUp')}</h1>
 						</div>
@@ -111,11 +112,7 @@ class SignupPage extends Component {
 									className='btn btn-primary'
 									disabled={disabled || apiInProgress}
 									onClick={this.submit}>
-									{apiInProgress && (
-										<span
-											className='spinner-border spinner-border-sm'
-											role='status'></span>
-									)}
+									{apiInProgress && <Spinner size='small' />}
 									{t('signUp')}
 								</button>
 							</div>

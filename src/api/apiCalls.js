@@ -1,3 +1,4 @@
+// import axios from 'axios'
 import i18n from '../locales/i18n'
 
 export const signup = body => {
@@ -8,5 +9,15 @@ export const signup = body => {
 			'Accept-Language': i18n.language,
 		},
 		body: JSON.stringify(body),
+	})
+}
+
+// export const activate = token => axios.post(`/api/1.0/users/token/${token}`)
+export const activate = token => {
+	return fetch(`/api/1.0/users/token/${token}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
 	})
 }
