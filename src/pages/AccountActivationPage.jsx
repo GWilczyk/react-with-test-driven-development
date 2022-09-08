@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 import { activate } from '../api/apiCalls'
+import Alert from '../components/Alert'
+import Spinner from '../components/Spinner'
 
 const AccountActivationPage = ({ match }) => {
 	const [result, setResult] = useState('')
@@ -19,14 +21,16 @@ const AccountActivationPage = ({ match }) => {
 			.catch(() => setResult('failed'))
 	}, [match.params.token])
 
-	let content = <span className='spinner-border' role='status' />
+	let content = (
+		<Alert center={true} type='secondary'>
+			<Spinner />
+		</Alert>
+	)
 
 	if (result === 'success') {
-		content = (
-			<div className='alert alert-success mt-3'>Account is activated</div>
-		)
+		content = <Alert>Account is activated</Alert>
 	} else if (result === 'failed') {
-		content = <div className='alert alert-danger mt-3'>Activation failure</div>
+		content = <Alert type='danger'>Activation failure</Alert>
 	}
 
 	return <div data-testid='activation-page'>{content}</div>

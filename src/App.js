@@ -16,7 +16,7 @@ function App() {
 
 	return (
 		<Router>
-			<nav className='navbar navbar-expand navbar-light bg-light shadow-sm'>
+			<nav className='navbar navbar-expand navbar-light bg-light shadow-sm '>
 				<div className='container'>
 					<Link className='navbar-brand' to='/' title='Home'>
 						<img src={logo} alt='Hoaxify' width='60' />
@@ -38,7 +38,7 @@ function App() {
 				</div>
 			</nav>
 
-			<div className='container'>
+			<div className='container pt-3'>
 				<Route exact path='/' component={HomePage} />
 				<Route path='/activate/:token' component={AccountActivationPage} />
 				<Route path='/login' component={LoginPage} />
