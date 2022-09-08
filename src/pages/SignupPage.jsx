@@ -40,17 +40,15 @@ class SignupPage extends Component {
 		try {
 			const response = await signup(body)
 
-			if (response.status === 200) {
-				this.setState({ signupSuccess: true })
-			} else if (response.status === 400) {
+			if (response.ok) {
+				this.setState({ apiInProgress: false, signupSuccess: true })
+			} else {
 				const data = await response.json()
-
-				this.setState({ apiInProgress: false, errors: data.validationErrors })
-
-				throw new Error(data.message)
+				this.setState({ errors: data.validationErrors })
+				throw new Error('Submit failed')
 			}
 		} catch (error) {
-			// console.error(error)
+			this.setState({ apiInProgress: false })
 		}
 	}
 

@@ -8,17 +8,22 @@ const AccountActivationPage = ({ match }) => {
 	const [result, setResult] = useState('')
 
 	useEffect(() => {
-		setResult('')
+		async function activateRequest() {
+			setResult('')
+			try {
+				const response = await activate(match.params.token)
 
-		activate(match.params.token)
-			.then(response => {
 				if (response.ok) {
 					setResult('success')
 				} else {
-					setResult('failed')
+					throw 'Activation failure'
 				}
-			})
-			.catch(() => setResult('failed'))
+			} catch (error) {
+				setResult('failed')
+			}
+		}
+
+		activateRequest()
 	}, [match.params.token])
 
 	let content = (
