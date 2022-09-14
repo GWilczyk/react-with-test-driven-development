@@ -21,3 +21,7 @@ export const activate = token => {
 		},
 	})
 }
+
+export const loadUsers = async () => {
+	return fetch('/api/1.0/users')
+}
