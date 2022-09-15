@@ -1,4 +1,3 @@
-// import axios from 'axios'
 import i18n from '../locales/i18n'
 
 export const signup = body => {
@@ -12,7 +11,6 @@ export const signup = body => {
 	})
 }
 
-// export const activate = token => axios.post(`/api/1.0/users/token/${token}`)
 export const activate = token => {
 	return fetch(`/api/1.0/users/token/${token}`, {
 		method: 'POST',
@@ -22,6 +20,18 @@ export const activate = token => {
 	})
 }
 
-export const loadUsers = async () => {
-	return fetch('/api/1.0/users')
+export const loadUsers = () => {
+	return fetch(
+		'/api/1.0/users?' +
+			new URLSearchParams({
+				page: 0,
+				size: 3,
+			}),
+		{
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'GET',
+		}
+	)
 }
