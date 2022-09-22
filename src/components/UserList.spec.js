@@ -1,5 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
@@ -87,5 +88,51 @@ describe('User List', () => {
 		render(<UserList />)
 		const users = await screen.findAllByText(/user/)
 		expect(users.length).toBe(3)
+	})
+	it('displays next page link', async () => {
+		render(<UserList />)
+		await screen.findByText('user1')
+		expect(screen.queryByText('next >')).toBeInTheDocument()
+	})
+	it('displays next page after clicking next page link', async () => {
+		render(<UserList />)
+		await screen.findByText('user1')
+		const nextPageLink = screen.queryByText('next >')
+		userEvent.click(nextPageLink)
+		const firstUserOnPage2 = await screen.findByText('user4')
+		expect(firstUserOnPage2).toBeInTheDocument()
+	})
+	it('hides next page link at last page', async () => {
+		render(<UserList />)
+		await screen.findByText('user1')
+		const nextPageLink = screen.queryByText('next >')
+		userEvent.click(nextPageLink)
+		await screen.findByText('user4')
+		userEvent.click(nextPageLink)
+		await screen.findByText('user7')
+		expect(screen.queryByText('next >')).not.toBeInTheDocument()
+	})
+	it('does not display the previous page link in the first page', async () => {
+		render(<UserList />)
+		await screen.findByText('user1')
+		const previousPageLink = screen.queryByText('< previous')
+		expect(previousPageLink).not.toBeInTheDocument()
+	})
+	it('displays the previous page link in second page', async () => {
+		render(<UserList />)
+		await screen.findByText('user1')
+		userEvent.click(screen.queryByText('next >'))
+		await screen.findByText('user4')
+		const previousPageLink = screen.queryByText('< previous')
+		expect(previousPageLink).toBeInTheDocument()
+	})
+	it('displays previous page after clicking previous page link', async () => {
+		render(<UserList />)
+		await screen.findByText('user1')
+		userEvent.click(screen.queryByText('next >'))
+		await screen.findByText('user4')
+		userEvent.click(screen.queryByText('< previous'))
+		const firstUserOnPage1 = await screen.findByText('user1')
+		expect(firstUserOnPage1).toBeInTheDocument()
 	})
 })

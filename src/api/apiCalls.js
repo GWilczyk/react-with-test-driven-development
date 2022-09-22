@@ -20,11 +20,11 @@ export const activate = token => {
 	})
 }
 
-export const loadUsers = () => {
+export const loadUsers = (page = 0) => {
 	return fetch(
 		'/api/1.0/users?' +
 			new URLSearchParams({
-				page: 0,
+				page,
 				size: 3,
 			}),
 		{
