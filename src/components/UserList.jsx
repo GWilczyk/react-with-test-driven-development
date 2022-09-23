@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
-import { withRouter } from 'react-router-dom'
 import { loadUsers } from '../api/apiCalls'
 
-const UserList = ({ history }) => {
+import UserListItem from './UserListItem'
+
+const UserList = () => {
 	const [state, setState] = useState({
 		content: [],
 		page: 0,
@@ -43,17 +43,9 @@ const UserList = ({ history }) => {
 			</div>
 
 			<ul className='list-group list-group-flush'>
-				{content.map(({ id, username }) => {
-					return (
-						<li
-							className='list-group-item list-group-item-action'
-							key={id}
-							onClick={() => history.push(`/user/${id}`)}
-							style={{ cursor: 'pointer' }}>
-							{username}
-						</li>
-					)
-				})}
+				{content.map(user => (
+					<UserListItem key={user.id} user={user} />
+				))}
 			</ul>
 
 			<div className='card-footer'>
@@ -77,4 +69,4 @@ const UserList = ({ history }) => {
 	)
 }
 
-export default withRouter(UserList)
+export default UserList
