@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { loadUsers } from '../api/apiCalls'
 
 import UserListItem from './UserListItem'
 
 const UserList = () => {
+	const { t } = useTranslation()
 	const [state, setState] = useState({
 		content: [],
 		page: 0,
@@ -39,7 +42,7 @@ const UserList = () => {
 	return (
 		<div className='card'>
 			<div className='card-header text-center'>
-				<h3>Users</h3>
+				<h3>{t('users')}</h3>
 			</div>
 
 			<ul className='list-group list-group-flush'>
@@ -53,7 +56,7 @@ const UserList = () => {
 					<button
 						className='btn btn-outline-secondary btn-sm me-2'
 						onClick={() => loadData(page - 1)}>
-						&lt; previous
+						{t('previousPage')}
 					</button>
 				)}
 
@@ -61,7 +64,7 @@ const UserList = () => {
 					<button
 						className='btn btn-outline-secondary btn-sm'
 						onClick={() => loadData(page + 1)}>
-						next &gt;
+						{t('nextPage')}
 					</button>
 				)}
 			</div>

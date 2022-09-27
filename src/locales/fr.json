@@ -1,9 +1,12 @@
 {
-	"signUp": "Inscription",
-	"login": "Connexion",
-	"username": "Nom d'utilisateur·trice",
 	"email": "Adresse email",
+	"login": "Connexion",
+	"nextPage": "suivant >",
 	"password": "Mot de passe",
 	"passwordConfirm": "Confirmation du mot de passe",
-	"passwordMismatchValidation": "Les mots de passe sont différents"
+	"passwordMismatchValidation": "Les mots de passe sont différents",
+	"previousPage": "< précédent",
+	"signUp": "Inscription",
+	"username": "Nom d'utilisateur·trice",
+	"users": "Utilisateurs·trices"
 }
