@@ -76,7 +76,7 @@ const server = setupServer(
 			page = 0
 		}
 		if (Number.isNaN(size)) {
-			size = 5
+			size = 3
 		}
 
 		return res(ctx.status(200), ctx.json(getPage(page, size)))
@@ -122,10 +122,9 @@ describe('User List', () => {
 		it('hides next page link at last page', async () => {
 			setup()
 			await screen.findByText('user1')
-			const nextPageLink = screen.queryByText('next >')
-			userEvent.click(nextPageLink)
+			userEvent.click(screen.queryByText('next >'))
 			await screen.findByText('user4')
-			userEvent.click(nextPageLink)
+			userEvent.click(screen.queryByText('next >'))
 			await screen.findByText('user7')
 			expect(screen.queryByText('next >')).not.toBeInTheDocument()
 		})
@@ -154,6 +153,13 @@ describe('User List', () => {
 			userEvent.click(screen.queryByText('< previous'))
 			const firstUserOnPage1 = await screen.findByText('user1')
 			expect(firstUserOnPage1).toBeInTheDocument()
+		})
+
+		it('displays spinner during the API call is in progress', async () => {
+			setup()
+			const spinner = screen.getByRole('status')
+			await screen.findByText('user1')
+			expect(spinner).not.toBeInTheDocument()
 		})
 	})
 
