@@ -10,10 +10,12 @@ import Spinner from '../components/Spinner'
 const UserPage = ({ match }) => {
 	const [loading, setLoading] = useState(true)
 	const [user, setUser] = useState({})
+	const [errorMessage, setErrorMessage] = useState('')
 
 	useEffect(() => {
 		async function getUserByIdRequest() {
 			setLoading(true)
+			setErrorMessage('')
 			setUser({})
 			try {
 				const response = await getUserById(match.params.id)
@@ -22,8 +24,10 @@ const UserPage = ({ match }) => {
 					const data = await response.json()
 					setUser(data)
 					setLoading(false)
-				} else {
-					throw new Error('User not found')
+				} else if (response.status === 404) {
+					const { message } = await response.json()
+					setErrorMessage(message)
+					throw new Error(message)
 				}
 			} catch (error) {
 				setUser({})
@@ -34,17 +38,25 @@ const UserPage = ({ match }) => {
 		getUserByIdRequest()
 	}, [match.params.id])
 
-	return (
-		<div data-testid='user-page'>
-			{loading ? (
-				<Alert center={true} type='secondary'>
-					<Spinner />
-				</Alert>
-			) : (
-				<ProfileCard user={user} />
-			)}
-		</div>
+	let content = (
+		<Alert center type='secondary'>
+			<Spinner />
+		</Alert>
 	)
+
+	if (!loading) {
+		if (errorMessage) {
+			content = (
+				<Alert center type='danger'>
+					{errorMessage}
+				</Alert>
+			)
+		} else {
+			content = <ProfileCard user={user} />
+		}
+	}
+
+	return <div data-testid='user-page'>{content}</div>
 }
 
 export default UserPage
