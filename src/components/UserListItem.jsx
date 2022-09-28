@@ -1,6 +1,7 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 import { object } from 'prop-types'
+
 import defaultProfileImage from '../assets/profile.png'
 
 const UserListItem = ({ history, user: { id, username } }) => {
