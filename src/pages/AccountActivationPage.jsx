@@ -1,6 +1,8 @@
-/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
+import { object } from 'prop-types'
+
 import { activate } from '../api/apiCalls'
+
 import Alert from '../components/Alert'
 import Spinner from '../components/Spinner'
 
@@ -42,3 +44,7 @@ const AccountActivationPage = ({ match }) => {
 }
 
 export default AccountActivationPage
+
+AccountActivationPage.propTypes = {
+	match: object.isRequired,
+}

@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-	act,
 	render,
 	screen,
 	waitFor,
@@ -13,7 +12,6 @@ import { rest } from 'msw'
 
 import SignupPage from './SignupPage'
 import LanguageSelector from '../components/LanguageSelector'
-import i18n from '../locales/i18n'
 import en from '../locales/en.json'
 import fr from '../locales/fr.json'
 
@@ -253,12 +251,6 @@ describe('Signup Page', () => {
 			passwordInput = screen.getByLabelText(en.password)
 			passwordConfirmInput = screen.getByLabelText(en.passwordConfirm)
 		}
-
-		afterEach(() => {
-			act(() => {
-				i18n.changeLanguage('en')
-			})
-		})
 
 		it('initially displays all text in English', () => {
 			setup()
